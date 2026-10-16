@@ -39,8 +39,20 @@ function formatStudentName(fullName) {
   return initials ? `${lastName} ${initials}` : lastName;
 }
 
+// Середнє всіх балів студентів групи groupCode, округлене до 0,1. Якщо балів немає – null.
+function groupAverage(students, groupCode) {
+  const allScores = students
+    .filter((s) => s.groupCode === groupCode)
+    .flatMap((s) => s.scores);
+  if (allScores.length === 0) {
+    return null;
+  }
+  return calculateAverageGrade(allScores);
+}
+
 module.exports = {
   uniqueEmails,
   calculateAverageGrade,
   formatStudentName,
+  groupAverage,
 };
