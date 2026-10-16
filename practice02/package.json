@@ -1,0 +1,9 @@
+{
+  "name": "study-group",
+  "version": "1.0.0",
+  "description": "Практична робота № 2. Автодоповнення коду: керування пропозиціями та контекстом",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

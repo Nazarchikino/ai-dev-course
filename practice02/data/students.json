@@ -1,0 +1,7 @@
+[
+  { "id": 1, "fullName": "Петренко Андрій Іванович", "email": "A.Petrenko@example.com ", "groupCode": "456-Д", "scores": [92, 85, 78] },
+  { "id": 2, "fullName": "Коваль Марія Олегівна", "email": "m.koval@example.com", "groupCode": "456-Д", "scores": [100, 95, 98] },
+  { "id": 3, "fullName": "Шевчук Олег", "email": "", "groupCode": "456-Д", "scores": [60, 71] },
+  { "id": 4, "fullName": "Бондар Ірина Петрівна", "email": "i.bondar@example.com", "groupCode": "366-Д", "scores": [88, 90] },
+  { "id": 5, "fullName": "Мельник Тарас Юрійович", "email": "a.petrenko@example.com", "groupCode": "366-Д", "scores": [] }
+]
