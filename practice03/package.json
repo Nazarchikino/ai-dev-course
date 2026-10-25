@@ -1,0 +1,10 @@
+{
+  "name": "college-tools",
+  "version": "1.0.0",
+  "description": "Практична робота № 3. Діалогова взаємодія в редакторі: пояснення коду та розбір повідомлень про помилки",
+  "scripts": {
+    "test": "node --test",
+    "examples": "node examples/run-legacy.js"
+  },
+  "license": "MIT"
+}
