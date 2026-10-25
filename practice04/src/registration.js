@@ -11,14 +11,13 @@
  */
 function registerParticipant(registry, participant, now = new Date()) {
   const closesAt = new Date(registry.event.registrationClosesAt);
-  if (now > closesAt) {
+  if (now >= closesAt) {
     throw new Error("Реєстрацію закрито");
   }
 
   const rawEmail = typeof participant?.email === "string" ? participant.email.trim().toLowerCase() : "";
-  const atIndex = rawEmail.indexOf("@");
-  const domainPart = atIndex !== -1 ? rawEmail.slice(atIndex + 1) : "";
-  if (!rawEmail || atIndex === -1 || !domainPart.includes(".")) {
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail);
+  if (!isValidEmail) {
     throw new TypeError("Некоректна електронна пошта");
   }
 
@@ -27,7 +26,9 @@ function registerParticipant(registry, participant, now = new Date()) {
     throw new TypeError("Вкажіть ПІБ");
   }
 
-  const isDuplicate = registry.registered.some((p) => p.email === rawEmail);
+  const isDuplicate =
+    registry.registered.some((p) => p.email === rawEmail) ||
+    registry.waitlist.some((p) => p.email === rawEmail);
   if (isDuplicate) {
     throw new Error("Учасник уже зареєстрований");
   }
