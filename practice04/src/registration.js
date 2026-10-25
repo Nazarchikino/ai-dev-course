@@ -1,5 +1,5 @@
 /**
- * Модуль реєстрації учасників на події коледжу.
+ * Модуль реєстрації учасників на події коледжу та скасування реєстрації.
  */
 
 /**
@@ -48,4 +48,32 @@ function registerParticipant(registry, participant, now = new Date()) {
   return { status: "waitlisted", position: registry.waitlist.length };
 }
 
-module.exports = { registerParticipant };
+/**
+ * Скасовує реєстрацію учасника за електронною поштою та за потреби переводить першого з черги.
+ * @param {import('./store').EventRegistry} registry - Сховище реєстрацій події
+ * @param {string} email - Електронна пошта учасника
+ * @returns {{ promoted: import('./store').Participant | null }}
+ */
+function cancelRegistration(registry, email) {
+  const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+
+  const regIndex = registry.registered.findIndex((p) => p.email === normalizedEmail);
+  if (regIndex !== -1) {
+    registry.registered.splice(regIndex, 1);
+    const promoted = registry.waitlist.length > 0 ? registry.waitlist.shift() : null;
+    if (promoted) {
+      registry.registered.push(promoted);
+    }
+    return { promoted };
+  }
+
+  const waitIndex = registry.waitlist.findIndex((p) => p.email === normalizedEmail);
+  if (waitIndex !== -1) {
+    registry.waitlist.splice(waitIndex, 1);
+    return { promoted: null };
+  }
+
+  throw new Error("Учасника не знайдено");
+}
+
+module.exports = { registerParticipant, cancelRegistration };
