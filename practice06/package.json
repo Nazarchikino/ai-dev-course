@@ -1,0 +1,14 @@
+{
+  "name": "grade-book",
+  "version": "1.0.0",
+  "description": "Практична робота № 6. Генерація модульних тестів засобами AI",
+  "main": "src/grades.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^30.0.0"
+  }
+}
