@@ -21,6 +21,7 @@ describe("Модульні тести grades.js за вимогами SPEC.md", 
 
     test("кидає TypeError, якщо аргумент не є масивом", () => {
       expect(() => average(null)).toThrow(TypeError);
+      expect(() => average(undefined)).toThrow(TypeError);
     });
   });
 
@@ -52,6 +53,12 @@ describe("Модульні тести grades.js за вимогами SPEC.md", 
       expect(() => toFivePoint(-1)).toThrow(RangeError);
       expect(() => toFivePoint(101)).toThrow(RangeError);
     });
+
+    // Додаткові тести за звітом про покриття (Завдання 7)
+    test("кидає RangeError, якщо бал не є числом або дорівнює NaN", () => {
+      expect(() => toFivePoint("90")).toThrow(RangeError);
+      expect(() => toFivePoint(NaN)).toThrow(RangeError);
+    });
   });
 
   describe("applyLatePenalty(score, daysLate)", () => {
@@ -70,6 +77,12 @@ describe("Модульні тести grades.js за вимогами SPEC.md", 
     test("повертає 0, якщо штраф перевищує початковий бал", () => {
       expect(applyLatePenalty(10, 3)).toBe(0);
     });
+
+    // Додаткові тести за звітом про покриття (Завдання 7: рядок 43)
+    test("кидає RangeError для від’ємної або нецілої кількості днів запізнення", () => {
+      expect(() => applyLatePenalty(80, -1)).toThrow(RangeError);
+      expect(() => applyLatePenalty(80, 1.5)).toThrow(RangeError);
+    });
   });
 
   describe("finalGrade(thematicGrades)", () => {
@@ -84,6 +97,36 @@ describe("Модульні тести grades.js за вимогами SPEC.md", 
     test("обчислює підсумкову оцінку для граничних оцінок 2 та 5", () => {
       expect(finalGrade([2, 2])).toBe(2);
       expect(finalGrade([5, 5])).toBe(5);
+    });
+
+    // Додаткові тести за звітом про покриття (Завдання 7: рядки 56, 60)
+    test("кидає Error для порожнього масиву або не-масиву тематичних оцінок", () => {
+      expect(() => finalGrade([])).toThrow("Немає тематичних оцінок");
+      expect(() => finalGrade(null)).toThrow("Немає тематичних оцінок");
+    });
+
+    test("кидає RangeError, якщо тематична оцінка менша за 2, більша за 5 або неціла", () => {
+      expect(() => finalGrade([1, 4])).toThrow("Некоректна тематична оцінка: 1");
+      expect(() => finalGrade([4, 6])).toThrow("Некоректна тематична оцінка: 6");
+      expect(() => finalGrade([3.5, 4])).toThrow(RangeError);
+    });
+  });
+
+  // Додаткові тести для знищення вижилих мутантів StrykerJS (Завдання 9)
+  describe("Перевірка повідомлень винятків та захисту від псевдомасивів (Завдання 9 – мутаційне тестування)", () => {
+    test("average кидає TypeError з точним повідомленням навіть для псевдомасиву { length: 0 }", () => {
+      expect(() => average({ length: 0 })).toThrow(
+        new TypeError("Очікується масив балів")
+      );
+    });
+
+    test("toFivePoint та applyLatePenalty кидають RangeError з точними повідомленнями", () => {
+      expect(() => toFivePoint(120)).toThrow(
+        new RangeError("Бал має бути числом від 0 до 100")
+      );
+      expect(() => applyLatePenalty(80, -2)).toThrow(
+        new RangeError("Кількість днів запізнення має бути цілим невід’ємним числом")
+      );
     });
   });
 });

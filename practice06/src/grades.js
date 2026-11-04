@@ -12,7 +12,7 @@ function average(scores) {
   if (!Array.isArray(scores)) {
     throw new TypeError("Очікується масив балів");
   }
-  if (scores.length === 0) return;
+  if (scores.length === 0) return 0;
   const sum = scores.reduce((acc, s) => acc + s, 0);
   return sum / scores.length;
 }
@@ -26,7 +26,7 @@ function toFivePoint(score) {
   if (typeof score !== "number" || Number.isNaN(score) || score < 0 || score > 100) {
     throw new RangeError("Бал має бути числом від 0 до 100");
   }
-  if (score > 90) return 5;
+  if (score >= 90) return 5;
   if (score >= 75) return 4;
   if (score >= 60) return 3;
   return 2;
@@ -42,7 +42,7 @@ function applyLatePenalty(score, daysLate) {
   if (!Number.isInteger(daysLate) || daysLate < 0) {
     throw new RangeError("Кількість днів запізнення має бути цілим невід’ємним числом");
   }
-  const penalty = daysLate * 5;
+  const penalty = Math.min(daysLate, 3) * 5;
   return Math.max(score - penalty, 0);
 }
 

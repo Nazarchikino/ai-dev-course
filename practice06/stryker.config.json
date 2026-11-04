@@ -1,0 +1,6 @@
+{
+  "testRunner": "jest",
+  "mutate": ["src/**/*.js", "!src/**/*.test.js"],
+  "reporters": ["clear-text", "html", "progress"],
+  "coverageAnalysis": "perTest"
+}
