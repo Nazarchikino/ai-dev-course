@@ -1,12 +1,24 @@
 const crypto = require("node:crypto");
-const { TOKEN_SECRET } = require("./config");
+const config = require("./config");
 
 function hashPassword(password) {
-  return crypto.createHash("md5").update(password).digest("hex");
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(String(password), salt, 64).toString("hex");
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, storedHash) {
+  if (typeof password !== "string" || typeof storedHash !== "string") return false;
+  const [salt, key] = storedHash.split(":");
+  if (!salt || !key) return false;
+  const derivedBuffer = crypto.scryptSync(password, salt, 64);
+  const keyBuffer = Buffer.from(key, "hex");
+  if (derivedBuffer.length !== keyBuffer.length) return false;
+  return crypto.timingSafeEqual(derivedBuffer, keyBuffer);
 }
 
 function sign(payload) {
-  return crypto.createHmac("sha256", TOKEN_SECRET).update(payload).digest("hex");
+  return crypto.createHmac("sha256", config.TOKEN_SECRET).update(payload).digest("hex");
 }
 
 /** Токен має вигляд login.role.підпис */
@@ -35,9 +47,10 @@ function requireAuth(req, res, next) {
 }
 
 function login(db, loginName, password) {
+  if (typeof loginName !== "string" || typeof password !== "string") return null;
   const user = db.prepare("SELECT login, password_hash, role FROM users WHERE login = ?").get(loginName);
-  if (!user || user.password_hash !== hashPassword(password)) return null;
+  if (!user || !verifyPassword(password, user.password_hash)) return null;
   return createToken(user.login, user.role);
 }
 
-module.exports = { hashPassword, createToken, verifyToken, requireAuth, login };
+module.exports = { hashPassword, verifyPassword, createToken, verifyToken, requireAuth, login };
