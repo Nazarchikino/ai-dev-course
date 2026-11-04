@@ -1,0 +1,11 @@
+{
+  "chat.promptFiles": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "properties": false,
+    "dotenv": false
+  }
+}
