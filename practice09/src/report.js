@@ -34,18 +34,9 @@ function formatStudentName(name, isShort) {
 }
 
 function formatStudentLine(student, studentAverage, opts) {
-  let line = "";
-  if (opts && opts.short) {
-    line =
-      formatStudentName(student.name, true) +
-      " — " +
-      formatScore(studentAverage);
-  } else {
-    line =
-      formatStudentName(student.name, false) +
-      " — " +
-      formatScore(studentAverage);
-  }
+  const isShort = Boolean(opts && opts.short);
+  const displayName = formatStudentName(student.name, isShort);
+  let line = displayName + " — " + formatScore(studentAverage);
   if (studentAverage < 2.5) {
     line = line + " [!]";
   }
@@ -55,11 +46,10 @@ function formatStudentLine(student, studentAverage, opts) {
 function buildReport(data, opts) {
   let reportText = "";
   const attentionStudents = [];
+  const studentAverages = [];
   reportText += "Відомість успішності\n";
   reportText += "Група: " + data.group + "\n";
   reportText += "------------------------------\n";
-  let groupGradesSum = 0;
-  let studentCount = 0;
   for (let i = 0; i < data.students.length; i++) {
     const student = data.students[i];
     const studentAverage = average(student.grades);
@@ -68,30 +58,11 @@ function buildReport(data, opts) {
       attentionStudents.push(student.name);
     }
     reportText += line + "\n";
-    groupGradesSum = groupGradesSum + studentAverage;
-    studentCount = studentCount + 1;
+    studentAverages.push(studentAverage);
   }
   reportText += "------------------------------\n";
-  let groupAverage = 0;
-  if (studentCount > 0) {
-    groupAverage = groupGradesSum / studentCount;
-  }
-  let groupLevel = "";
-  if (groupAverage >= 4.5) {
-    groupLevel = "відмінно";
-  } else {
-    if (groupAverage >= 3.5) {
-      groupLevel = "добре";
-    } else {
-      if (groupAverage >= 2.5) {
-        groupLevel = "задовільно";
-      } else {
-        groupLevel = "незадовільно";
-      }
-    }
-  }
-  reportText +=
-    "Середній бал групи: " + groupAverage.toFixed(1) + " (" + groupLevel + ")\n";
+  const groupAverage = average(studentAverages);
+  reportText += "Середній бал групи: " + formatScore(groupAverage) + "\n";
   if (attentionStudents.length > 0) {
     reportText += "Потребують уваги: " + attentionStudents.join(", ") + "\n";
   } else {
