@@ -1,4 +1,11 @@
 // Формування відомості успішності групи
+const GRADE_THRESHOLDS = [
+  { min: 4.5, name: "відмінно" },
+  { min: 3.5, name: "добре" },
+  { min: 2.5, name: "задовільно" },
+  { min: -Infinity, name: "незадовільно" },
+];
+
 function average(values) {
   if (values.length === 0) {
     return 0;
@@ -11,19 +18,7 @@ function average(values) {
 }
 
 function gradeName(score) {
-  if (score >= 4.5) {
-    return "відмінно";
-  } else {
-    if (score >= 3.5) {
-      return "добре";
-    } else {
-      if (score >= 2.5) {
-        return "задовільно";
-      } else {
-        return "незадовільно";
-      }
-    }
-  }
+  return GRADE_THRESHOLDS.find((level) => score >= level.min).name;
 }
 
 function formatScore(score) {
