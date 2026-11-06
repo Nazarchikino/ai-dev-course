@@ -26,6 +26,10 @@ function gradeName(score) {
   }
 }
 
+function formatScore(score) {
+  return score.toFixed(1) + " (" + gradeName(score) + ")";
+}
+
 function buildReport(data, opts) {
   let reportText = "";
   const attentionStudents = [];
@@ -37,7 +41,6 @@ function buildReport(data, opts) {
   for (let i = 0; i < data.students.length; i++) {
     const student = data.students[i];
     const studentAverage = average(student.grades);
-    const studentLevel = gradeName(studentAverage);
     let line = "";
     if (opts && opts.short) {
       line =
@@ -45,18 +48,9 @@ function buildReport(data, opts) {
         " " +
         student.name.split(" ")[1][0] +
         ". — " +
-        studentAverage.toFixed(1) +
-        " (" +
-        studentLevel +
-        ")";
+        formatScore(studentAverage);
     } else {
-      line =
-        student.name +
-        " — " +
-        studentAverage.toFixed(1) +
-        " (" +
-        studentLevel +
-        ")";
+      line = student.name + " — " + formatScore(studentAverage);
     }
     if (studentAverage < 2.5) {
       line = line + " [!]";
