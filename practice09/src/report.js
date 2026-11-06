@@ -1,5 +1,15 @@
 // Формування відомості успішності групи
-// Написано кілька років тому, працює, тестів немає.
+function average(values) {
+  if (values.length === 0) {
+    return 0;
+  }
+  let sum = 0;
+  for (let i = 0; i < values.length; i++) {
+    sum = sum + values[i];
+  }
+  return sum / values.length;
+}
+
 function buildReport(data, opts) {
   let reportText = "";
   const attentionStudents = [];
@@ -10,14 +20,7 @@ function buildReport(data, opts) {
   let studentCount = 0;
   for (let i = 0; i < data.students.length; i++) {
     const student = data.students[i];
-    let gradesSum = 0;
-    for (let j = 0; j < student.grades.length; j++) {
-      gradesSum = gradesSum + student.grades[j];
-    }
-    let studentAverage = 0;
-    if (student.grades.length > 0) {
-      studentAverage = gradesSum / student.grades.length;
-    }
+    const studentAverage = average(student.grades);
     let studentLevel = "";
     if (studentAverage >= 4.5) {
       studentLevel = "відмінно";
