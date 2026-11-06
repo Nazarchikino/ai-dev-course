@@ -35,6 +35,9 @@ function formatStudentName(name, isShort) {
 function formatStudentLine(student, studentAverage, opts) {
   const isShort = Boolean(opts && opts.short);
   const displayName = formatStudentName(student.name, isShort);
+  if (studentAverage === null) {
+    return `${displayName} — н/а`;
+  }
   const warningSuffix = studentAverage < 2.5 ? " [!]" : "";
   return `${displayName} — ${formatScore(studentAverage)}${warningSuffix}`;
 }
@@ -42,16 +45,17 @@ function formatStudentLine(student, studentAverage, opts) {
 function buildReport(data, opts) {
   const records = data.students.map((student) => ({
     student,
-    studentAverage: average(student.grades),
+    studentAverage: student.grades.length > 0 ? average(student.grades) : null,
   }));
   const studentLines = records.map(({ student, studentAverage }) =>
     formatStudentLine(student, studentAverage, opts)
   );
-  const attentionStudents = records
-    .filter(({ studentAverage }) => studentAverage < 2.5)
-    .map(({ student }) => student.name);
-  const groupAverage = average(records.map((r) => r.studentAverage));
-  const attentionSummary =
+  const graded = records.filter((r) => r.studentAverage !== null);
+  const attentionStudents = graded
+    .filter((r) => r.studentAverage < 2.5)
+    .map((r) => r.student.name);
+  const groupAverage = average(graded.map((r) => r.studentAverage));
+  const attentionText =
     attentionStudents.length > 0 ? attentionStudents.join(", ") : "немає";
 
   return [
@@ -61,7 +65,7 @@ function buildReport(data, opts) {
     ...studentLines,
     SEPARATOR,
     `Середній бал групи: ${formatScore(groupAverage)}`,
-    `Потребують уваги: ${attentionSummary}`,
+    `Потребують уваги: ${attentionText}`,
     "",
   ].join("\n");
 }

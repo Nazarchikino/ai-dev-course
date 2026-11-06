@@ -1,7 +1,7 @@
 const groupFixture = require("./fixtures/group.json");
 const { buildReport } = require("../src/report");
 
-describe("Характеризаційні тести buildReport (фіксація поточної поведінки)", () => {
+describe("Характеризаційні та функціональні тести buildReport", () => {
   describe("Знімки повного тексту відомості на tests/fixtures/group.json", () => {
     test("звичайний режим (повні імена студентів)", () => {
       const result = buildReport(groupFixture, { short: false });
@@ -33,7 +33,7 @@ describe("Характеризаційні тести buildReport (фіксац�
     });
   });
 
-  describe("Граничні випадки складу групи", () => {
+  describe("Граничні випадки складу групи та нова вимога (Завдання 9)", () => {
     test("порожня група (students: [])", () => {
       const emptyGroup = { group: "456-Д", students: [] };
       const result = buildReport(emptyGroup);
@@ -50,7 +50,7 @@ describe("Характеризаційні тести buildReport (фіксац�
       );
     });
 
-    test("дивність: студент без оцінок отримує 0.0 (незадовільно) [!], потрапляє у список уваги і занижує середній бал групи", () => {
+    test("нова вимога: студент без оцінок показується як «н/а» (без [!]) і не враховується в середньому балі групи", () => {
       const data = {
         group: "456-Д",
         students: [
@@ -58,14 +58,17 @@ describe("Характеризаційні тести buildReport (фіксац�
           { name: "Кравець Софія", grades: [] },
         ],
       };
-      const result = buildReport(data);
-      expect(result).toContain("Кравець Софія — 0.0 (незадовільно) [!]");
-      expect(result).toContain("Середній бал групи: 2.5 (задовільно)");
-      expect(result).toContain("Потребують уваги: Кравець Софія");
+      const resultFull = buildReport(data);
+      expect(resultFull).toContain("Кравець Софія — н/а\n");
+      expect(resultFull).not.toContain("[!]");
+      expect(resultFull).toContain("Середній бал групи: 5.0 (відмінно)");
+      expect(resultFull).toContain("Потребують уваги: немає");
+
+      const resultShort = buildReport(data, { short: true });
+      expect(resultShort).toContain("Кравець С. — н/а\n");
     });
 
     test("дивність: поріг рівня визначається за точним середнім до округлення toFixed(1)", () => {
-      // 49 / 11 = 4.4545... < 4.5 (тому "добре"), але toFixed(1) форматує як "4.5"
       const data = {
         group: "456-Д",
         students: [
