@@ -1,0 +1,17 @@
+{
+  "name": "grade-report",
+  "version": "1.0.0",
+  "description": "Практична робота № 9. Рефакторинг коду за участю AI",
+  "main": "src/report.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "lint": "eslint src",
+    "report": "node src/cli.js tests/fixtures/group.json"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "jest": "^30.0.0"
+  }
+}
