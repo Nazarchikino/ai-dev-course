@@ -4,9 +4,11 @@
  */
 
 const LOAN_DAYS = 14;
+const RENEW_DAYS = 7;
 const FINE_PER_DAY = 5;
 const MAX_FINE = 100;
 const MAX_ACTIVE = 3;
+const MS_PER_DAY = 86_400_000;
 const CARD_RE = /^(KP|ZV)-(\d{4})\/(\d{2})$/;
 
 function isValidCard(card) {
@@ -18,8 +20,6 @@ function dueDate(issueDate, days = LOAN_DAYS) {
   due.setDate(due.getDate() + days);
   return due;
 }
-
-const MS_PER_DAY = 86_400_000;
 
 function toUtcDay(date) {
   return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
@@ -56,7 +56,7 @@ function issueBook(loans, reader, bookId, issueDate) {
   const loan = {
     readerId: reader.id,
     bookId,
-    issuedAt: issueDate,
+    issuedAt: new Date(issueDate.getTime()),
     due: dueDate(issueDate),
     returnedAt: null,
   };
@@ -69,7 +69,25 @@ function returnBook(loan, returnedAt) {
   return calculateFine(loan.due, returnedAt);
 }
 
+function renewLoan(loan, today) {
+  if (loan.returnedAt !== null && loan.returnedAt !== undefined) {
+    throw new Error("Не можна продовжити повернуту книгу");
+  }
+  if (loan.renewed) {
+    throw new Error("Строк видачі вже було продовжено");
+  }
+  if (toUtcDay(today) > toUtcDay(loan.due)) {
+    throw new Error("Не можна продовжити прострочену книгу");
+  }
+  return {
+    ...loan,
+    issuedAt: loan.issuedAt ? new Date(loan.issuedAt.getTime()) : loan.issuedAt,
+    due: dueDate(loan.due, RENEW_DAYS),
+    renewed: true,
+  };
+}
+
 module.exports = {
-  LOAN_DAYS, FINE_PER_DAY, MAX_FINE, MAX_ACTIVE,
-  isValidCard, dueDate, calculateFine, canBorrow, issueBook, returnBook,
+  LOAN_DAYS, RENEW_DAYS, FINE_PER_DAY, MAX_FINE, MAX_ACTIVE,
+  isValidCard, dueDate, calculateFine, canBorrow, issueBook, returnBook, renewLoan,
 };
