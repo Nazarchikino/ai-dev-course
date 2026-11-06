@@ -14,8 +14,9 @@ function isValidCard(card) {
 }
 
 function dueDate(issueDate, days = LOAN_DAYS) {
-  issueDate.setDate(issueDate.getDate() + days);
-  return issueDate;
+  const due = new Date(issueDate.getTime());
+  due.setDate(due.getDate() + days);
+  return due;
 }
 
 function calculateFine(due, returnedAt) {
