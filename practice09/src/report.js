@@ -38,6 +38,25 @@ function formatStudentName(name, isShort) {
   return surname + " " + firstName[0] + ".";
 }
 
+function formatStudentLine(student, studentAverage, opts) {
+  let line = "";
+  if (opts && opts.short) {
+    line =
+      formatStudentName(student.name, true) +
+      " — " +
+      formatScore(studentAverage);
+  } else {
+    line =
+      formatStudentName(student.name, false) +
+      " — " +
+      formatScore(studentAverage);
+  }
+  if (studentAverage < 2.5) {
+    line = line + " [!]";
+  }
+  return line;
+}
+
 function buildReport(data, opts) {
   let reportText = "";
   const attentionStudents = [];
@@ -49,20 +68,8 @@ function buildReport(data, opts) {
   for (let i = 0; i < data.students.length; i++) {
     const student = data.students[i];
     const studentAverage = average(student.grades);
-    let line = "";
-    if (opts && opts.short) {
-      line =
-        formatStudentName(student.name, true) +
-        " — " +
-        formatScore(studentAverage);
-    } else {
-      line =
-        formatStudentName(student.name, false) +
-        " — " +
-        formatScore(studentAverage);
-    }
+    const line = formatStudentLine(student, studentAverage, opts);
     if (studentAverage < 2.5) {
-      line = line + " [!]";
       attentionStudents.push(student.name);
     }
     reportText += line + "\n";
