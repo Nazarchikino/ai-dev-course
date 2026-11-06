@@ -30,6 +30,14 @@ function formatScore(score) {
   return score.toFixed(1) + " (" + gradeName(score) + ")";
 }
 
+function formatStudentName(name, isShort) {
+  if (!isShort) {
+    return name;
+  }
+  const [surname, firstName] = name.split(" ");
+  return surname + " " + firstName[0] + ".";
+}
+
 function buildReport(data, opts) {
   let reportText = "";
   const attentionStudents = [];
@@ -44,13 +52,14 @@ function buildReport(data, opts) {
     let line = "";
     if (opts && opts.short) {
       line =
-        student.name.split(" ")[0] +
-        " " +
-        student.name.split(" ")[1][0] +
-        ". — " +
+        formatStudentName(student.name, true) +
+        " — " +
         formatScore(studentAverage);
     } else {
-      line = student.name + " — " + formatScore(studentAverage);
+      line =
+        formatStudentName(student.name, false) +
+        " — " +
+        formatScore(studentAverage);
     }
     if (studentAverage < 2.5) {
       line = line + " [!]";
