@@ -19,8 +19,14 @@ function dueDate(issueDate, days = LOAN_DAYS) {
   return due;
 }
 
+const MS_PER_DAY = 86_400_000;
+
+function toUtcDay(date) {
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 function calculateFine(due, returnedAt) {
-  const late = returnedAt.getDate() - due.getDate();
+  const late = (toUtcDay(returnedAt) - toUtcDay(due)) / MS_PER_DAY;
   if (late <= 0) return 0;
   return Math.min(late * FINE_PER_DAY, MAX_FINE);
 }
