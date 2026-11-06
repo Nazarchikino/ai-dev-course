@@ -1,77 +1,92 @@
 // Формування відомості успішності групи
 // Написано кілька років тому, працює, тестів немає.
 function buildReport(data, opts) {
-  var r = "";
-  var arr2 = [];
-  r += "Відомість успішності\n";
-  r += "Група: " + data.group + "\n";
-  r += "------------------------------\n";
-  var sum2 = 0;
-  var cnt2 = 0;
-  for (var i = 0; i < data.students.length; i++) {
-    var s = data.students[i];
-    var t = 0;
-    for (var j = 0; j < s.grades.length; j++) {
-      t = t + s.grades[j];
+  let reportText = "";
+  const attentionStudents = [];
+  reportText += "Відомість успішності\n";
+  reportText += "Група: " + data.group + "\n";
+  reportText += "------------------------------\n";
+  let groupGradesSum = 0;
+  let studentCount = 0;
+  for (let i = 0; i < data.students.length; i++) {
+    const student = data.students[i];
+    let gradesSum = 0;
+    for (let j = 0; j < student.grades.length; j++) {
+      gradesSum = gradesSum + student.grades[j];
     }
-    var d = 0;
-    if (s.grades.length > 0) {
-      d = t / s.grades.length;
+    let studentAverage = 0;
+    if (student.grades.length > 0) {
+      studentAverage = gradesSum / student.grades.length;
     }
-    var g = "";
-    if (d >= 4.5) {
-      g = "відмінно";
+    let studentLevel = "";
+    if (studentAverage >= 4.5) {
+      studentLevel = "відмінно";
     } else {
-      if (d >= 3.5) {
-        g = "добре";
+      if (studentAverage >= 3.5) {
+        studentLevel = "добре";
       } else {
-        if (d >= 2.5) {
-          g = "задовільно";
+        if (studentAverage >= 2.5) {
+          studentLevel = "задовільно";
         } else {
-          g = "незадовільно";
+          studentLevel = "незадовільно";
         }
       }
     }
-    var line = "";
+    let line = "";
     if (opts && opts.short) {
-      line = s.name.split(" ")[0] + " " + s.name.split(" ")[1][0] + ". — " + d.toFixed(1) + " (" + g + ")";
+      line =
+        student.name.split(" ")[0] +
+        " " +
+        student.name.split(" ")[1][0] +
+        ". — " +
+        studentAverage.toFixed(1) +
+        " (" +
+        studentLevel +
+        ")";
     } else {
-      line = s.name + " — " + d.toFixed(1) + " (" + g + ")";
+      line =
+        student.name +
+        " — " +
+        studentAverage.toFixed(1) +
+        " (" +
+        studentLevel +
+        ")";
     }
-    if (d < 2.5) {
+    if (studentAverage < 2.5) {
       line = line + " [!]";
-      arr2.push(s.name);
+      attentionStudents.push(student.name);
     }
-    r += line + "\n";
-    sum2 = sum2 + d;
-    cnt2 = cnt2 + 1;
+    reportText += line + "\n";
+    groupGradesSum = groupGradesSum + studentAverage;
+    studentCount = studentCount + 1;
   }
-  r += "------------------------------\n";
-  var avg = 0;
-  if (cnt2 > 0) {
-    avg = sum2 / cnt2;
+  reportText += "------------------------------\n";
+  let groupAverage = 0;
+  if (studentCount > 0) {
+    groupAverage = groupGradesSum / studentCount;
   }
-  var ga = "";
-  if (avg >= 4.5) {
-    ga = "відмінно";
+  let groupLevel = "";
+  if (groupAverage >= 4.5) {
+    groupLevel = "відмінно";
   } else {
-    if (avg >= 3.5) {
-      ga = "добре";
+    if (groupAverage >= 3.5) {
+      groupLevel = "добре";
     } else {
-      if (avg >= 2.5) {
-        ga = "задовільно";
+      if (groupAverage >= 2.5) {
+        groupLevel = "задовільно";
       } else {
-        ga = "незадовільно";
+        groupLevel = "незадовільно";
       }
     }
   }
-  r += "Середній бал групи: " + avg.toFixed(1) + " (" + ga + ")\n";
-  if (arr2.length > 0) {
-    r += "Потребують уваги: " + arr2.join(", ") + "\n";
+  reportText +=
+    "Середній бал групи: " + groupAverage.toFixed(1) + " (" + groupLevel + ")\n";
+  if (attentionStudents.length > 0) {
+    reportText += "Потребують уваги: " + attentionStudents.join(", ") + "\n";
   } else {
-    r += "Потребують уваги: немає\n";
+    reportText += "Потребують уваги: немає\n";
   }
-  return r;
+  return reportText;
 }
 
 module.exports = { buildReport };
