@@ -36,6 +36,14 @@ function createLoanService(repo) {
       events.emit("loan:returned", { loan: updated, reader, overdueDays, fine });
       return { loan: updated, overdueDays, fine };
     },
+
+    readerFines(readerId) {
+      const reader = repo.findReader(readerId);
+      if (!reader) throw httpError(404, "Читача не знайдено");
+      const finedLoans = repo.findLoans((l) => l.readerId === readerId && Boolean(l.returnedAt) && l.fine > 0);
+      const total = finedLoans.reduce((sum, l) => sum + l.fine, 0);
+      return { readerId, total, loans: finedLoans.length };
+    },
   };
 }
 

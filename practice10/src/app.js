@@ -2,6 +2,7 @@ const express = require("express");
 const { requestLog } = require("./middleware/requestLog");
 const { authenticate } = require("./middleware/auth");
 const { loansRouter } = require("./routes/loans");
+const { readersRouter } = require("./routes/readers");
 const { createRepository } = require("./repositories");
 const { createLoanService } = require("./services/loanService");
 require("./notifications/emailNotifier");
@@ -16,6 +17,7 @@ function createApp({ storage = "memory", seed } = {}) {
   app.use(requestLog);
   app.use(authenticate);
   app.use("/api/loans", loansRouter(service));
+  app.use("/api/readers", readersRouter(service));
 
   app.use((err, req, res, next) => {
     res.status(err.status || 500).json({ error: err.expose ? err.message : "Внутрішня помилка" });
