@@ -5,6 +5,7 @@ const { loansRouter } = require("./routes/loans");
 const { createRepository } = require("./repositories");
 const { createLoanService } = require("./services/loanService");
 require("./notifications/emailNotifier");
+require("./notifications/fineJournal");
 
 function createApp({ storage = "memory", seed } = {}) {
   const app = express();
