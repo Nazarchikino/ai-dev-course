@@ -2,6 +2,7 @@
   "readers": [
     { "id": 1, "name": "Коваль Андрій", "type": "student", "email": "koval@example.edu.ua" },
     { "id": 2, "name": "Бондар Марія", "type": "teacher", "email": "bondar@example.edu.ua" },
-    { "id": 3, "name": "Ткач Олена", "type": "staff", "email": "tkach@example.edu.ua" }
+    { "id": 3, "name": "Ткач Олена", "type": "staff", "email": "tkach@example.edu.ua" },
+    { "id": 4, "name": "Мельник Ігор", "type": "guest", "email": "melnyk@example.edu.ua" }
   ]
 }

@@ -7,6 +7,8 @@ function readerTypeLabel(type) {
       return "Викладач";
     case "staff":
       return "Працівник";
+    case "guest":
+      return "Гість";
     default:
       return "Інше";
   }
