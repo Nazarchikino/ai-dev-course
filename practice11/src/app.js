@@ -3,6 +3,17 @@ const { createBookingService } = require("./bookings");
 const { findFreeSlots } = require("./slots");
 const defaultRooms = require("../data/rooms.json");
 
+/**
+ * Створює та налаштовує екземпляр Express-застосунку для REST API бронювання аудиторій.
+ * Реєструє маршрути перегляду аудиторій, пошуку бронювань і вільних проміжків, створення
+ * та скасування бронювань, а також централізований обробник HTTP-помилок.
+ *
+ * @param {Array<object>} [rooms=defaultRooms] Початковий масив аудиторій (за замовчуванням із data/rooms.json).
+ * @returns {object} Налаштований екземпляр Express-застосунку.
+ * @example
+ * const app = createApp();
+ * app.listen(3000);
+ */
 function createApp(rooms = defaultRooms) {
   const app = express();
   const service = createBookingService(rooms);
