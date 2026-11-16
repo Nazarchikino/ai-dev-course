@@ -7,7 +7,7 @@ function toMinutes(hhmm) {
 /**
  * Перетворює хвилини від початку доби на рядок часу.
  * @param {number} minutes
- * @returns {number} рядок у форматі "8:30"
+ * @returns {string} рядок у форматі "08:30" ("ГГ:ХХ")
  */
 function formatTime(minutes) {
   const h = String(Math.floor(minutes / 60)).padStart(2, "0");

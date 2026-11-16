@@ -10,7 +10,7 @@ function httpError(status, message) {
 
 /**
  * Створює сервіс бронювань.
- * @param {Array} roomList список аудиторій
+ * @param {Array} rooms список аудиторій
  */
 function createBookingService(rooms) {
   const bookings = [];
@@ -43,7 +43,7 @@ function createBookingService(rooms) {
       return booking;
     },
 
-    // бронювання можна скасувати не пізніше ніж за 24 години до початку
+    // бронювання можна скасувати не пізніше ніж за 2 години (MIN_CANCEL_HOURS) до початку
     cancel(id, now = new Date()) {
       const booking = bookings.find((b) => b.id === id);
       if (!booking) throw httpError(404, "Бронювання не знайдено");
