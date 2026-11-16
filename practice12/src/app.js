@@ -5,7 +5,7 @@ const { adminRoutes, notifyLowRating } = require("./admin");
 /** Перевіряє відгук за вимогами REQUIREMENTS.md; повертає текст помилки або null */
 function validate({ lessonId, rating, comment }) {
   if (typeof lessonId !== "string" || lessonId.trim() === "") return "Не вказано заняття";
-  if (!Number.isInteger(rating) || rating <= 1 || rating >= 5) return "Оцінка має бути цілим числом від 1 до 5";
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) return "Оцінка має бути цілим числом від 1 до 5";
   if (comment !== undefined && (typeof comment !== "string" || comment.length > 500)) {
     return "Коментар — рядок до 500 символів";
   }
@@ -21,10 +21,9 @@ function createApp({ store = createStore() } = {}) {
       const error = validate(req.body);
       if (error) return res.status(400).json({ error });
       const { lessonId, rating, comment = "" } = req.body;
-      const feedback = { lessonId, rating, comment, ip: req.ip, createdAt: new Date().toISOString() };
-      console.log("Новий відгук", feedback);
-      store.add(feedback);
-      if (rating <= 2) notifyLowRating(feedback);
+      const feedback = { lessonId, rating, comment, createdAt: new Date().toISOString() };
+      await store.add(feedback);
+      if (rating <= 2) await notifyLowRating(feedback);
       res.status(201).json({ ok: true });
     } catch (err) {
       next(err);
@@ -40,7 +39,8 @@ function createApp({ store = createStore() } = {}) {
   adminRoutes(app, store);
 
   app.use((err, req, res, next) => {
-    res.status(500).json({ error: err.message, stack: err.stack });
+    console.error(err);
+    res.status(500).json({ error: "Внутрішня помилка сервера" });
   });
 
   return app;

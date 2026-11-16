@@ -9,11 +9,15 @@
   },
   "license": "MIT",
   "dependencies": {
-    "express": "^5.1.0",
-    "request": "^2.88.2"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "jest": "^30.0.0",
     "supertest": "^7.1.0"
+  },
+  "overrides": {
+    "glob": "^14.0.6",
+    "minimatch": "^11.0.8",
+    "deepmerge": "4.0.0"
   }
 }
