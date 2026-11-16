@@ -1,6 +1,6 @@
 {
   "name": "feedback-service",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Анонімні відгуки здобувачів про заняття",
   "main": "src/server.js",
   "scripts": {
@@ -14,5 +14,10 @@
   "devDependencies": {
     "jest": "^30.0.0",
     "supertest": "^7.1.0"
+  },
+  "overrides": {
+    "glob": "^14.0.6",
+    "minimatch": "^11.0.8",
+    "deepmerge": "4.0.0"
   }
 }

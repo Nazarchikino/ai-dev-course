@@ -1,5 +1,6 @@
 const express = require("express");
 const { createStore } = require("./store");
+const { adminRoutes, notifyLowRating } = require("./admin");
 
 /** Перевіряє відгук за вимогами REQUIREMENTS.md; повертає текст помилки або null */
 function validate({ lessonId, rating, comment }) {
@@ -20,7 +21,9 @@ function createApp({ store = createStore() } = {}) {
       const error = validate(req.body);
       if (error) return res.status(400).json({ error });
       const { lessonId, rating, comment = "" } = req.body;
-      await store.add({ lessonId, rating, comment, createdAt: new Date().toISOString() });
+      const feedback = { lessonId, rating, comment, createdAt: new Date().toISOString() };
+      await store.add(feedback);
+      if (rating <= 2) await notifyLowRating(feedback);
       res.status(201).json({ ok: true });
     } catch (err) {
       next(err);
@@ -32,6 +35,8 @@ function createApp({ store = createStore() } = {}) {
     const average = ratings.length ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10 : null;
     res.json({ lessonId: req.params.id, count: ratings.length, average });
   });
+
+  adminRoutes(app, store);
 
   app.use((err, req, res, next) => {
     console.error(err);
