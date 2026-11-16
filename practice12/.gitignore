@@ -1,0 +1,7 @@
+node_modules/
+coverage/
+data/*.json
+.env
+*.log
+*.docx
+*.pdf
